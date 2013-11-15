@@ -24,7 +24,7 @@ func (s *State)NonTerminal()bool{
 }
 
 func (s *State)Equals(p State)(bool){
-	cond1 := (p.LHS==s.LHS) && (len(s.RHS)==len(p.RHS))
+	cond1 := (p.LHS==s.LHS) && (len(s.RHS)==len(p.RHS)) && (s.DotPosition == p.DotPosition)
 	if cond1{
 		for i:=0;i<len(s.RHS);i++{
 			if s.RHS[i] != p.RHS[i]{

@@ -3,6 +3,7 @@ package chart
 import(
 	"./state"
 	"sync"
+	"fmt"
 )
 
 type StateCollection struct{
@@ -70,4 +71,8 @@ func (c Chart)Len()(l int){
 	l = len(c.rows)
 	c.chartLock.RUnlock()
 	return
+}
+
+func (c Chart)PrintC(){
+	fmt.Println(c.rows)
 }

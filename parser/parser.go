@@ -9,7 +9,7 @@ import(
 	"./scanner"
 	"./reducer"
 	"strings"
-	//"sync"
+	"sync"
 )
 
 func Parse(g *grammar.Grammar,words []string)(parseChart chart.Chart,err error){
@@ -24,17 +24,39 @@ func Parse(g *grammar.Grammar,words []string)(parseChart chart.Chart,err error){
 			}
 	}();
 	
+	var stop sync.RWMutex
+	var no =0
+	var noProtect sync.RWMutex
 	for i,word = range words{
+	
+				for i>= parseChart.Len() &&  i!=0 {
+					stop.Lock()
+					stop.Unlock()
+					noProtect.RLock()
+					n := no
+					noProtect.RUnlock()
+					if n == 0{
+						panic("Parse Error")
+					}
+				}
 		for k:=0;k<parseChart.LenAt(i);k++{
+				for (i>= parseChart.Len()) && (k>=parseChart.LenAt(i) && i!=0 && k!=0){
+					stop.Lock()
+					stop.Unlock()
+				}
 				state := parseChart.At(i).At(k)
 				if state.Incomplete(){
 					if state.NonTerminal(){
-						predictor.Predict(&parseChart,state,i,g)
+						ch := make(chan bool)
+						go predictor.Predict(&parseChart,state,i,g,&stop,ch,&no,&noProtect)
+						<-ch
 					}else{
-						scanner.Scan(&parseChart,state,word,i)
+						scanner.Scan(&parseChart,state,word,i)					
 					}
 				}else{
+					stop.Lock()
 					reducer.Reduce(&parseChart,state,i)
+					stop.Unlock()
 				}
 		}
 	}
