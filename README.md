@@ -1,9 +1,11 @@
-<<<<<<< HEAD
-Earleys-Non-Parallel-
-=====================
-=======
 Earleys-Parallel-Algorithm
 ==========================
+Parallelized version of earley's algorithm.
 
-Parallel parsing using Earley's Algorithm
->>>>>>> 71a5d7d9cb3536850ca78ca80809c621b3cf715b
+The algorithm exploits the cheap way to create goroutines to 
+parallelize the earleys n^3 algorithm.
+
+In this current release:
+* The algorithm is slower because of the garbage collection kicks in every 60 second.(This will be fixed in further versions)
+* This algorithm starts performing better for bigger and bigger Context sensitive / tree attributed grammar, which is a reasonable assumption to make.
+
